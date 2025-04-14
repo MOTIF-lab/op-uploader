@@ -25,9 +25,9 @@ jobs:
             # Build the Docker image
             - name: Build Docker image
               run: |
-                    docker build -t ghcr.io/motif-lab/${{ github.repository }}:latest .
+                    docker build -t ghcr.io/motif-lab/op-uploader:latest .
 
             # Push the Docker image to GitHub Container Registry
             - name: Push Docker image
               run: |
-                    docker push ghcr.io/motif-lab/${{ github.repository }}:latest
+                    docker push ghcr.io/motif-lab/op-uploader:latest
