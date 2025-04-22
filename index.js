@@ -8,8 +8,8 @@ const { safeAwait } = require('./utils');
 const app = express();
 
 const minioClient = new Minio.Client({
-    endPoint: 'nas.motiflab.net',
-    port: 9000,
+    endPoint:  process.env.MINIO_HOST || 'nas.motiflab.net',
+    port: parseInt(process.env.MINIO_PORT || 443),
     useSSL: true,
     accessKey: process.env.MINIO_ACCESS_KEY,
     secretKey: process.env.MINIO_SECRET_KEY
@@ -25,7 +25,7 @@ app.get('/v1.1/devices/:dongle_id/', async (req, res) => {
     const { dongle_id } = req.params;
     res.json({
         is_paired: true,
-        prime_type: 1,
+        prime_type: 5,
     })
 });
 
@@ -35,7 +35,17 @@ app.get('/v1.4/:dongle_id/upload_url/', async (req, res) => {
     if (!file_path) {
         return res.status(400).send('file_path is required');
     }
-    const obj_path = `${dongle_id}/${decodeURIComponent(file_path)}`;
+    const fn_path = decodeURIComponent(file_path);
+    const fn_path_split = fn_path.match(/^(.*)--(\d+)\/(.*)$/);
+    if (!fn_path_split) {
+        return res.status(400).send('Invalid file_path format');
+    }
+    
+    const route_id = fn_path_split[1];
+    const segment_id = fn_path_split[2];
+    const bare_filename = fn_path_split[3];
+
+    const obj_path = `${dongle_id}/${route_id}/${segment_id}/${bare_filename}`;
     const [err, url] = await safeAwait(
         minioClient.presignedPutObject(
             'comma-upload',
