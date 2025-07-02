@@ -65,7 +65,7 @@ app.get('/v1.4/:dongle_id/upload_url/', async (req, res) => {
         const segment_id = fn_path_split[2];
         const bare_filename = fn_path_split[3];
 
-        obj_path = `${dongle_id}/${route_id}/${segment_id}/${bare_filename}`;
+        obj_path = `${dongle_id}/${route_id}/${route_id}--${segment_id}/${bare_filename}`;
     }
     const [err, url] = await safeAwait(
         minioClient.presignedPutObject(
@@ -90,6 +90,13 @@ app.get('/v1.4/:dongle_id/upload_url/', async (req, res) => {
         }
     });
     
+});
+
+app.get('/v1/devices/:dongle_id/firehose_stats/', async (req, res) => {
+    const { dongle_id } = req.params;
+    res.json({
+        firehost: 69420
+    });
 });
 
 app.listen(process.env.PORT || 3000, '0.0.0.0' ,() => {
