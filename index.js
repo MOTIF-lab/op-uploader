@@ -92,7 +92,7 @@ app.get('/v1.4/:dongle_id/upload_url/', async (req, res) => {
     
 });
 
-app.get('/v1/devices/:dongle_id/firehose_stats/', async (req, res) => {
+app.get('/v1/devices/:dongle_id/firehose_stats', async (req, res) => {
     const { dongle_id } = req.params;
     res.json({
         firehost: 69420
